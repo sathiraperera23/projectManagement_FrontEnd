@@ -1,0 +1,50 @@
+# AGENTS.md
+
+## Stack
+- Framework: Next.js 14 (App Router, TypeScript)
+- Styling: Tailwind CSS
+- State: Zustand (auth + UI), React Query (server state)
+- Forms: React Hook Form + Zod
+- Rich text: TipTap
+- Drag and drop: @dnd-kit
+- Charts: Recharts
+- Gantt: frappe-gantt
+- Real time: SignalR (@microsoft/signalr)
+- HTTP: Axios with JWT interceptor in src/lib/axios.ts
+
+## Backend
+- API base URL: NEXT_PUBLIC_API_BASE_URL in .env.local
+- All API functions in src/lib/api/
+- Auth: Keycloak SSO — tokens in Zustand authStore
+- JWT attached to every request via Axios interceptor
+- 401 triggers token refresh then logout
+
+## Conventions
+- App Router only — never Pages Router
+- Route groups: (auth) for public, (dashboard) for protected
+- No any types — strict TypeScript throughout
+- Use cn() from src/lib/utils.ts for conditional classes
+- Never fetch directly in components — use hooks from src/hooks/
+- All API calls through Axios instance in src/lib/axios.ts
+- Never hardcode API URLs
+- Component files use PascalCase
+- Hook files use camelCase prefixed with use
+
+## Project Structure
+- src/app/        → pages and layouts
+- src/components/ → reusable UI components
+- src/lib/        → axios, signalr, api functions, utils
+- src/store/      → Zustand stores
+- src/hooks/      → custom React hooks
+- src/types/      → TypeScript interfaces
+
+## Backend API Reference
+- Auth:          POST /api/auth/login, /api/auth/refresh, /api/auth/logout
+- Projects:      /api/projects
+- Tickets:       /api/tickets
+- Sprints:       /api/projects/{id}/sprints
+- Backlog:       /api/backlog, /api/projects/{id}/backlog
+- Notifications: /api/notifications
+- Reports:       /api/projects/{id}/reports
+- Users:         /api/users
+- Roles:         /api/roles

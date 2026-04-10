@@ -1,0 +1,16 @@
+
+> temp-app@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1789ms
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 2.6s (72 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 11.8s (879 modules)
+ ✓ Compiled in 1310ms (386 modules)
+ GET /login 200 in 13318ms
