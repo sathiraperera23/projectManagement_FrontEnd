@@ -1,5 +1,6 @@
 import api from '@/lib/axios';
 import type { TicketFilters, BulkStatusRequest, BulkAssignRequest, CreateTicketRequest } from '@/types/ticket';
+import type { CreateStatusRequest, UpdateStatusRequest } from '@/types/kanban';
 
 export const ticketsApi = {
 
@@ -140,5 +141,44 @@ export const ticketsApi = {
   },
   requestMoreInfo: async (ticketId: number, message: string) => {
     await api.post(`/api/tickets/${ticketId}/request-more-info`, { message });
+  },
+
+  // Kanban board data
+  getKanbanBoard: async (projectId: number, params?: {
+    subProjectId?: number;
+    teamId?: number;
+    groupBy?: string;
+  }) => {
+    const { data } = await api.get(`/api/projects/${projectId}/kanban`, { params });
+    return data;
+  },
+
+  // Sub-project kanban
+  getSubProjectKanban: async (subProjectId: number) => {
+    const { data } = await api.get(`/api/subprojects/${subProjectId}/kanban`);
+    return data;
+  },
+
+  // Team kanban
+  getTeamKanban: async (teamId: number) => {
+    const { data } = await api.get(`/api/teams/${teamId}/kanban`);
+    return data;
+  },
+
+  // Project statuses
+  getProjectStatuses: async (projectId: number) => {
+    const { data } = await api.get(`/api/projects/${projectId}/statuses`);
+    return data;
+  },
+  createStatus: async (projectId: number, request: CreateStatusRequest) => {
+    const { data } = await api.post(`/api/projects/${projectId}/statuses`, request);
+    return data;
+  },
+  updateProjectStatus: async (projectId: number, statusId: number, request: UpdateStatusRequest) => {
+    const { data } = await api.put(`/api/projects/${projectId}/statuses/${statusId}`, request);
+    return data;
+  },
+  deleteStatus: async (projectId: number, statusId: number) => {
+    await api.delete(`/api/projects/${projectId}/statuses/${statusId}`);
   },
 };

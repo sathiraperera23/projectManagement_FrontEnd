@@ -57,3 +57,12 @@
 - Bug-specific fields shown only when category === Bug
 - Approval buttons shown only when approvalStatus === PendingApproval
   and user has APPROVE_TICKETS permission
+
+## Kanban Board
+- Location: src/app/(dashboard)/projects/[projectId]/board/page.tsx
+- Drag and drop: @dnd-kit/core and @dnd-kit/sortable
+- Optimistic updates on drag end — revert on API failure
+- WIP limits fetched from GET /api/projects/{projectId}/wip-limits
+- Status management via GET/POST/PUT/DELETE /api/projects/{projectId}/statuses
+- Toast notifications via react-hot-toast
+- DragOverlay shows ghost card while dragging
