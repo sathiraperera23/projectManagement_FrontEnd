@@ -108,3 +108,68 @@ export interface CreateTicketRequest {
   actualBehaviour?: string;
   environment?: string;
 }
+
+export interface TicketComment {
+  id: number;
+  ticketId: number;
+  parentCommentId?: number;
+  body: string;
+  isInternalNote: boolean;
+  author: {
+    id: number;
+    displayName: string;
+    avatarUrl?: string;
+  };
+  reactions: CommentReaction[];
+  replies: TicketComment[];
+  createdAt: string;
+  updatedAt?: string;
+  isDeleted: boolean;
+}
+
+export interface CommentReaction {
+  emoji: string;
+  count: number;
+  reactedByMe: boolean;
+}
+
+export interface TicketAttachment {
+  id: number;
+  fileName: string;
+  contentType: string;
+  fileSizeBytes: number;
+  downloadUrl: string;
+  externalUrl?: string;
+  externalLabel?: string;
+  version: number;
+  uploadedBy: {
+    id: number;
+    displayName: string;
+  };
+  uploadedAt: string;
+}
+
+export interface TicketLink {
+  id: number;
+  linkedTicketId: number;
+  linkedTicketNumber: string;
+  linkedTicketTitle: string;
+  linkedTicketStatus: string;
+  relationshipType: string; // Blocks, IsBlockedBy, RelatesTo, Duplicates
+}
+
+export interface TimeLog {
+  id: number;
+  userId: number;
+  userDisplayName: string;
+  hoursLogged: number;
+  description?: string;
+  loggedAt: string;
+}
+
+export interface StatusHistoryEntry {
+  fromStatus: string;
+  toStatus: string;
+  changedBy: string;
+  changedAt: string;
+}

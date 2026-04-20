@@ -43,4 +43,102 @@ export const ticketsApi = {
     const { data } = await api.get(`/api/tickets/${id}/history`);
     return data;
   },
+
+  // Update ticket (general)
+  update: async (id: number, updates: Partial<CreateTicketRequest>) => {
+    const { data } = await api.patch(`/api/tickets/${id}`, updates);
+    return data;
+  },
+
+  // Comments
+  getComments: async (ticketId: number) => {
+    const { data } = await api.get(`/api/tickets/${ticketId}/comments`);
+    return data;
+  },
+  addComment: async (ticketId: number, body: string, isInternalNote: boolean) => {
+    const { data } = await api.post(`/api/tickets/${ticketId}/comments`, { body, isInternalNote });
+    return data;
+  },
+  editComment: async (commentId: number, body: string) => {
+    const { data } = await api.put(`/api/comments/${commentId}`, { body });
+    return data;
+  },
+  deleteComment: async (commentId: number) => {
+    await api.delete(`/api/comments/${commentId}`);
+  },
+  addReaction: async (commentId: number, emoji: string) => {
+    await api.post(`/api/comments/${commentId}/reactions`, { emoji });
+  },
+  removeReaction: async (commentId: number, emoji: string) => {
+    await api.delete(`/api/comments/${commentId}/reactions/${emoji}`);
+  },
+
+  // Attachments
+  getAttachments: async (ticketId: number) => {
+    const { data } = await api.get(`/api/tickets/${ticketId}/attachments`);
+    return data;
+  },
+  uploadAttachment: async (ticketId: number, file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    const { data } = await api.post(`/api/tickets/${ticketId}/attachments`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return data;
+  },
+  addExternalLink: async (ticketId: number, url: string, label: string) => {
+    const { data } = await api.post(`/api/tickets/${ticketId}/attachments/link`, { externalUrl: url, externalLabel: label });
+    return data;
+  },
+  deleteAttachment: async (ticketId: number, attachmentId: number) => {
+    await api.delete(`/api/tickets/${ticketId}/attachments/${attachmentId}`);
+  },
+  downloadAttachment: (attachmentId: number) => {
+    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/attachments/${attachmentId}/download`;
+  },
+
+  // Watchers
+  getWatchers: async (ticketId: number) => {
+    const { data } = await api.get(`/api/tickets/${ticketId}/watchers`);
+    return data;
+  },
+  watch: async (ticketId: number) => {
+    await api.post(`/api/tickets/${ticketId}/watch`);
+  },
+  unwatch: async (ticketId: number) => {
+    await api.delete(`/api/tickets/${ticketId}/watch`);
+  },
+
+  // Ticket links
+  addLink: async (ticketId: number, linkedTicketId: number, relationshipType: string) => {
+    const { data } = await api.post(`/api/tickets/${ticketId}/links`, { linkedTicketId, relationshipType });
+    return data;
+  },
+  removeLink: async (ticketId: number, linkId: number) => {
+    await api.delete(`/api/tickets/${ticketId}/links/${linkId}`);
+  },
+
+  // Time logging
+  getTimeLogs: async (ticketId: number) => {
+    const { data } = await api.get(`/api/tickets/${ticketId}/time-logs`);
+    return data;
+  },
+  logTime: async (ticketId: number, hoursLogged: number, description?: string) => {
+    const { data } = await api.post(`/api/tickets/${ticketId}/time-logs`, { hoursLogged, description });
+    return data;
+  },
+  deleteTimeLog: async (timeLogId: number) => {
+    await api.delete(`/api/time-logs/${timeLogId}`);
+  },
+
+  // Approval (for customer bugs)
+  approveBug: async (ticketId: number) => {
+    await api.post(`/api/tickets/${ticketId}/approve`);
+  },
+  rejectBug: async (ticketId: number, reason: string) => {
+    await api.post(`/api/tickets/${ticketId}/reject`, { reason });
+  },
+  requestMoreInfo: async (ticketId: number, message: string) => {
+    await api.post(`/api/tickets/${ticketId}/request-more-info`, { message });
+  },
 };

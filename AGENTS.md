@@ -48,3 +48,12 @@
 - Reports:       /api/projects/{id}/reports
 - Users:         /api/users
 - Roles:         /api/roles
+
+## Ticket Detail Page
+- Location: src/app/(dashboard)/tickets/[ticketId]/page.tsx
+- Two column layout: main content 65%, sidebar 35%
+- Comments use TipTap editor with @mention support
+- Status change requires reason when moving to Paused or Cancelled
+- Bug-specific fields shown only when category === Bug
+- Approval buttons shown only when approvalStatus === PendingApproval
+  and user has APPROVE_TICKETS permission
