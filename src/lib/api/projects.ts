@@ -172,4 +172,37 @@ export const projectsApi = {
     const { data } = await api.get(`/api/projects/${projectId}/notification-rules`);
     return data;
   },
+
+  // ── Gantt data ────────────────────────────────────────
+  getProjectGantt: async (projectId: number) => {
+    const { data } = await api.get(`/api/projects/${projectId}/gantt`);
+    return data;
+  },
+  getProductGantt: async (projectId: number, productId: number) => {
+    const { data } = await api.get(`/api/products/${productId}/gantt`);
+    return data;
+  },
+  getSubProjectGantt: async (subProjectId: number) => {
+    const { data } = await api.get(`/api/subprojects/${subProjectId}/gantt`);
+    return data;
+  },
+  exportGantt: async (projectId: number, format: 'pdf' | 'png') => {
+    const response = await api.get(
+      `/api/projects/${projectId}/gantt/export`,
+      { params: { format }, responseType: 'blob' }
+    );
+    return response.data;
+  },
+  exportTimeline: async (projectId: number, format: 'pdf' | 'png') => {
+    const response = await api.get(
+      `/api/projects/${projectId}/timeline/export`,
+      { params: { format }, responseType: 'blob' }
+    );
+    return response.data;
+  },
+
+  // ── Revised due date ──────────────────────────────────
+  setRevisedDueDate: async (ticketId: number, revisedDueDate: string) => {
+    await api.put(`/api/tickets/${ticketId}/revised-due-date`, { revisedDueDate });
+  },
 };

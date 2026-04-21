@@ -80,3 +80,15 @@
 - Project summary: GET /api/projects/{projectId}/summary
 - WIP limits: PUT /api/projects/{projectId}/wip-limits
 - Bug report template: GET/PUT /api/projects/{projectId}/bug-report-template
+
+## Gantt and Timeline
+- Page location: src/app/(dashboard)/projects/[projectId]/timeline/page.tsx
+- Gantt library: frappe-gantt (dynamically imported in src/components/gantt/GanttChart.tsx to prevent SSR crash)
+- Three view levels: project, product, sub-project
+- API endpoints:
+  - Project level: GET /api/projects/{projectId}/gantt
+  - Product level: GET /api/products/{productId}/gantt
+  - Sub-project level: GET /api/subprojects/{subProjectId}/gantt
+- Drag to reschedule: calls PUT on the relevant entity endpoint (SubProject, Sprint, or Ticket)
+- Export: GET /api/projects/{projectId}/gantt/export?format=pdf|png
+- Download utility: src/lib/utils/download.ts

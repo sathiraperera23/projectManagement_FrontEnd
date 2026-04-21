@@ -15,6 +15,8 @@ interface Props {
 
 export function KanbanColumn({ column, isCompact = false }: Props) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+
   const { setNodeRef } = useDroppable({
     id: column.statusId,
     data: {
@@ -23,17 +25,21 @@ export function KanbanColumn({ column, isCompact = false }: Props) {
     },
   });
 
-  const ticketIds = column.tickets.map(t => t.id);
+  const toggleGroup = (key: string) => {
+    setCollapsedGroups(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const totalTickets = column.tickets?.length || column.groups?.reduce((acc, g) => acc + g.tickets.length, 0) || 0;
 
   const wipStatus = column.wipLimit
-    ? column.tickets.length > column.wipLimit ? 'error' : column.tickets.length >= column.wipLimit - 1 ? 'warning' : 'ok'
+    ? totalTickets > column.wipLimit ? 'error' : totalTickets >= column.wipLimit - 1 ? 'warning' : 'ok'
     : 'ok';
 
   return (
     <div
       className={cn(
         "flex h-full flex-col transition-all duration-300",
-        isCollapsed ? "w-12" : "w-[280px] min-w-[280px]"
+        isCollapsed ? "w-12" : "w-[320px] min-w-[320px]"
       )}
     >
       <div className="flex items-center justify-between px-2 py-3">
@@ -52,7 +58,7 @@ export function KanbanColumn({ column, isCompact = false }: Props) {
                 {column.statusName}
               </h3>
               <span className="ml-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-bold text-gray-500">
-                {column.tickets.length}
+                {totalTickets}
               </span>
             </>
           )}
@@ -65,7 +71,7 @@ export function KanbanColumn({ column, isCompact = false }: Props) {
                 "text-[10px] font-bold",
                 wipStatus === 'error' ? "text-red-600" : wipStatus === 'warning' ? "text-amber-600" : "text-gray-400"
               )}>
-                {column.tickets.length} / {column.wipLimit}
+                {totalTickets} / {column.wipLimit}
               </span>
             )}
             <button className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
@@ -85,21 +91,46 @@ export function KanbanColumn({ column, isCompact = false }: Props) {
       <div
         ref={setNodeRef}
         className={cn(
-          "flex-1 space-y-3 overflow-y-auto px-2 pb-4",
+          "flex-1 space-y-4 overflow-y-auto px-2 pb-4",
           isCollapsed ? "hidden" : "block",
           column.isOverWipLimit && "bg-red-50/30"
         )}
       >
-        <SortableContext items={ticketIds} strategy={verticalListSortingStrategy}>
-          {column.tickets.map((ticket) => (
-            <KanbanCard key={ticket.id} ticket={ticket} isCompact={isCompact} />
-          ))}
-        </SortableContext>
+        {column.groups ? (
+          column.groups.map(group => (
+            <div key={group.groupKey} className="space-y-2">
+              <button
+                onClick={() => toggleGroup(group.groupKey)}
+                className="flex w-full items-center gap-1 text-[10px] font-bold text-gray-400 uppercase tracking-tighter hover:text-gray-600"
+              >
+                {collapsedGroups[group.groupKey] ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                {group.groupLabel} ({group.tickets.length})
+              </button>
 
-        {column.tickets.length === 0 && (
-          <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-gray-100 text-xs font-medium text-gray-400 italic">
-            Drop here
-          </div>
+              {!collapsedGroups[group.groupKey] && (
+                <SortableContext items={group.tickets.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                  <div className="space-y-3">
+                    {group.tickets.map((ticket) => (
+                      <KanbanCard key={ticket.id} ticket={ticket} isCompact={isCompact} />
+                    ))}
+                  </div>
+                </SortableContext>
+              )}
+            </div>
+          ))
+        ) : (
+          <SortableContext items={column.tickets.map(t => t.id)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+              {column.tickets.map((ticket) => (
+                <KanbanCard key={ticket.id} ticket={ticket} isCompact={isCompact} />
+              ))}
+              {column.tickets.length === 0 && (
+                <div className="flex h-24 items-center justify-center rounded-lg border-2 border-dashed border-gray-100 text-xs font-medium text-gray-400 italic">
+                  Drop here
+                </div>
+              )}
+            </div>
+          </SortableContext>
         )}
       </div>
     </div>

@@ -57,20 +57,7 @@ export function KanbanBoard({ projectId, initialColumns, isCompact = false }: Pr
   };
 
   const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    if (activeId === overId) return;
-
-    const isActiveATicket = active.data.current?.type === 'Ticket';
-    const isOverAColumn = over.data.current?.type === 'Column';
-
-    if (isActiveATicket && isOverAColumn) {
-       // logic for moving into empty column if needed
-    }
+    // Optional: add visual cues when dragging over columns
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -86,22 +73,54 @@ export function KanbanBoard({ projectId, initialColumns, isCompact = false }: Pr
     if (over.data.current?.type === 'Column') {
         newStatusId = overId as number;
     } else {
-        const targetColumn = columns.find(col => col.tickets.some(t => t.id === overId));
+        const targetColumn = columns.find(col => {
+            if (col.tickets && col.tickets.some(t => t.id === overId)) return true;
+            if (col.groups) {
+                return col.groups.some(g => g.tickets.some(t => t.id === overId));
+            }
+            return false;
+        });
         newStatusId = targetColumn?.statusId || (overId as number);
     }
 
-    const sourceColumn = columns.find(col => col.tickets.some(t => t.id === ticketId));
+    const sourceColumn = columns.find(col => {
+        if (col.tickets && col.tickets.some(t => t.id === ticketId)) return true;
+        if (col.groups) {
+            return col.groups.some(g => g.tickets.some(t => t.id === ticketId));
+        }
+        return false;
+    });
+
     if (!sourceColumn || sourceColumn.statusId === newStatusId) return;
 
     // Optimistic update
-    const ticket = sourceColumn.tickets.find(t => t.id === ticketId)!;
+    const moveTicket = (col: KanbanColumnType, isAdding: boolean) => {
+        if (isAdding) {
+            const ticket = sourceColumn.tickets?.find(t => t.id === ticketId) ||
+                          sourceColumn.groups?.flatMap(g => g.tickets).find(t => t.id === ticketId);
+            if (!ticket) return col;
+
+            if (col.tickets) return { ...col, tickets: [...col.tickets, ticket] };
+            if (col.groups) {
+                // If grouped, we'd need to know which group to add to.
+                // For now, simplify and just invalidate query for grouped boards.
+                return col;
+            }
+        } else {
+            if (col.tickets) return { ...col, tickets: col.tickets.filter(t => t.id !== ticketId) };
+            if (col.groups) {
+                return {
+                    ...col,
+                    groups: col.groups.map(g => ({ ...g, tickets: g.tickets.filter(t => t.id !== ticketId) }))
+                };
+            }
+        }
+        return col;
+    };
+
     const newColumns = columns.map(col => {
-        if (col.statusId === sourceColumn.statusId) {
-            return { ...col, tickets: col.tickets.filter(t => t.id !== ticketId) };
-        }
-        if (col.statusId === newStatusId) {
-            return { ...col, tickets: [...col.tickets, ticket] };
-        }
+        if (col.statusId === sourceColumn.statusId) return moveTicket(col, false);
+        if (col.statusId === newStatusId) return moveTicket(col, true);
         return col;
     });
 
@@ -117,6 +136,8 @@ export function KanbanBoard({ projectId, initialColumns, isCompact = false }: Pr
     }
   };
 
+  const hasGroups = columns.some(col => !!col.groups);
+
   return (
     <DndContext
       sensors={sensors}
@@ -125,7 +146,7 @@ export function KanbanBoard({ projectId, initialColumns, isCompact = false }: Pr
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full gap-2 overflow-x-auto p-4">
+      <div className="flex h-full gap-4 p-4 overflow-x-auto min-w-full bg-gray-100/50">
         {columns.map((column) => (
           <KanbanColumn key={column.statusId} column={column} isCompact={isCompact} />
         ))}
