@@ -66,3 +66,17 @@
 - Status management via GET/POST/PUT/DELETE /api/projects/{projectId}/statuses
 - Toast notifications via react-hot-toast
 - DragOverlay shows ghost card while dragging
+
+## Project Pages
+- Projects list: src/app/(dashboard)/projects/page.tsx
+- Project layout with tabs: src/app/(dashboard)/projects/[projectId]/layout.tsx
+- Project summary: src/app/(dashboard)/projects/[projectId]/summary/page.tsx
+- Project settings: src/app/(dashboard)/projects/[projectId]/settings/page.tsx
+
+## API Route Reference
+- Products nested under: /api/projects/{projectId}/products
+- Sub-projects nested under: /api/projects/{projectId}/products/{productId}/subprojects
+- Sub-project progress: GET .../subprojects/{id}/progress
+- Project summary: GET /api/projects/{projectId}/summary
+- WIP limits: PUT /api/projects/{projectId}/wip-limits
+- Bug report template: GET/PUT /api/projects/{projectId}/bug-report-template

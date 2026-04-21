@@ -94,8 +94,8 @@ export function TicketForm({ isOpen, onClose }: Props) {
   });
 
   const { data: teamMembers } = useQuery({
-    queryKey: ['team', selectedProjectId],
-    queryFn: () => projectsApi.getTeamMembers(selectedProjectId!),
+    queryKey: ['project-members', selectedProjectId],
+    queryFn: () => projectsApi.getMembers(selectedProjectId!),
     enabled: !!selectedProjectId
   });
 
