@@ -92,3 +92,34 @@
 - Drag to reschedule: calls PUT on the relevant entity endpoint (SubProject, Sprint, or Ticket)
 - Export: GET /api/projects/{projectId}/gantt/export?format=pdf|png
 - Download utility: src/lib/utils/download.ts
+
+## Sprint Planning
+- Page: src/app/(dashboard)/projects/[projectId]/sprints/page.tsx
+- API file: src/lib/api/sprints.ts
+- Hooks: src/hooks/useSprints.ts
+
+## Sprint API Routes
+- GET  /api/projects/{projectId}/sprints
+- POST /api/projects/{projectId}/sprints
+- GET  /api/projects/{projectId}/sprints/active
+- GET  /api/projects/{projectId}/sprints/{id}
+- PUT  /api/projects/{projectId}/sprints/{id}
+- DELETE /api/projects/{projectId}/sprints/{id}
+- POST /api/projects/{projectId}/sprints/{id}/activate
+- POST /api/projects/{projectId}/sprints/{id}/close
+- GET  /api/projects/{projectId}/sprints/{id}/tickets
+- POST /api/projects/{projectId}/sprints/{id}/tickets/{ticketId}
+- DELETE /api/projects/{projectId}/sprints/{id}/tickets/{ticketId}
+- GET  /api/projects/{projectId}/sprints/{id}/capacity
+- PUT  /api/projects/{projectId}/sprints/{id}/capacity
+- GET  /api/projects/{projectId}/sprints/{id}/summary
+- GET  /api/projects/{projectId}/sprints/history
+- GET  /api/projects/{projectId}/sprints/{id}/scope-changes
+- GET  /api/projects/{projectId}/sprints/velocity
+- GET  /api/sprints/{sprintId}/burndown
+
+## Sprint business rules
+- Only one active sprint per project at a time
+- Capacity is a warning not a hard block
+- Close sprint requires disposition for incomplete tickets (MoveToBacklog, MoveToNextSprint, LeaveInPlace)
+- Removing ticket from active sprint requires a reason
