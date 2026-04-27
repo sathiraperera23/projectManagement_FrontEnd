@@ -123,3 +123,29 @@
 - Capacity is a warning not a hard block
 - Close sprint requires disposition for incomplete tickets (MoveToBacklog, MoveToNextSprint, LeaveInPlace)
 - Removing ticket from active sprint requires a reason
+
+## Project Backlog
+- Page: src/app/(dashboard)/projects/[projectId]/backlog/page.tsx
+- API file: src/lib/api/backlog.ts
+- Hooks: src/hooks/useBacklog.ts
+
+## Backlog API Routes
+- GET  /api/projects/{projectId}/backlog
+- POST /api/projects/{projectId}/backlog
+- GET  /api/backlog/{id}
+- PUT  /api/backlog/{id}
+- DELETE /api/backlog/{id}
+- GET  /api/backlog/{id}/versions
+- POST /api/backlog/{id}/rollback/{versionId}
+- GET  /api/backlog/{id}/approvals
+- POST /api/backlog/{id}/approvals
+- POST /api/backlog/{id}/approvals/{approvalId}/approve
+- POST /api/backlog/{id}/approvals/{approvalId}/reject
+- POST /api/backlog/{id}/attachments
+- DELETE /api/backlog/{id}/attachments/{attachmentId}
+
+## Backlog Business Rules
+- Items support versioning and rollback.
+- Items can be sent for architectural or business approval.
+- Approvals can be approved or rejected with a reason/comment.
+- Attachments are managed per backlog item.
