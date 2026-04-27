@@ -149,3 +149,43 @@
 - Items can be sent for architectural or business approval.
 - Approvals can be approved or rejected with a reason/comment.
 - Attachments are managed per backlog item.
+
+## Reports and Charts
+- Page: src/app/(dashboard)/reports/page.tsx
+- API: src/lib/api/reports.ts
+- Hooks: src/hooks/useReports.ts
+- All reports require a `projectId` selected from the global project selector.
+- Charts use Recharts and are located in src/components/charts/
+- Complex reports (RTM, Costing, Delays) are in src/components/reports/
+
+## Report API Routes
+- GET /api/projects/{projectId}/reports/rtm
+- GET /api/projects/{projectId}/reports/rtm/export
+- GET /api/projects/{projectId}/reports/dependency-matrix
+- GET /api/projects/{projectId}/reports/dependency-matrix/export
+- GET /api/projects/{projectId}/reports/costing
+- GET /api/projects/{projectId}/reports/costing/export
+- GET /api/projects/{projectId}/reports/delays
+- GET /api/projects/{projectId}/reports/delays/export
+- GET /api/projects/{projectId}/reports/sprint
+- GET /api/projects/{projectId}/reports/bugs
+- GET /api/projects/{projectId}/reports/workload
+- GET /api/projects/{projectId}/reports/ticket-age
+- GET /api/projects/{projectId}/reports/change-requests
+- GET /api/projects/{projectId}/charts/ticket-status-distribution
+- GET /api/projects/{projectId}/charts/ticket-category-breakdown
+- GET /api/projects/{projectId}/charts/team-workload
+- GET /api/projects/{projectId}/charts/milestone-progress
+- GET /api/projects/{projectId}/charts/bug-trend
+- GET /api/projects/{projectId}/delays
+- GET /api/projects/{projectId}/delays/overdue
+- PUT /api/tickets/{ticketId}/delay-reason
+- PUT /api/tickets/{ticketId}/revised-due-date
+- GET /api/projects/{projectId}/budget
+- POST /api/projects/{projectId}/budget
+- GET /api/projects/{projectId}/escalation-rules
+
+## Permission gates
+- Costing & P&L: `VIEW_COSTING_DATA` permission required
+- Budget setting: `VIEW_BUDGET_DATA` permission required
+- Use `PermissionGate` component for conditional rendering.
