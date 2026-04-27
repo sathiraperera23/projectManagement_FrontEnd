@@ -189,3 +189,46 @@
 - Costing & P&L: `VIEW_COSTING_DATA` permission required
 - Budget setting: `VIEW_BUDGET_DATA` permission required
 - Use `PermissionGate` component for conditional rendering.
+
+## Admin Panel
+- Layout: src/app/(dashboard)/admin/layout.tsx
+- Users: src/app/(dashboard)/admin/users/page.tsx
+- Roles: src/app/(dashboard)/admin/roles/page.tsx
+- Settings: src/app/(dashboard)/admin/settings/page.tsx
+- Accept invitation: src/app/(auth)/accept-invitation/page.tsx (Public)
+- API: src/lib/api/users.ts (usersApi and rolesApi)
+- Hooks: src/hooks/useAdmin.ts
+
+## Admin API Routes
+- GET  /api/users
+- GET  /api/users/{id}
+- PUT  /api/users/{id}/deactivate
+- PUT  /api/users/{id}/reactivate
+- PUT  /api/users/me/profile
+- POST /api/users/invite
+- GET  /api/users/invitations
+- DELETE /api/users/invitations/{id}
+- POST /api/users/accept-invitation
+- POST /api/projects/{projectId}/user-roles
+- DELETE /api/projects/{projectId}/user-roles/{userId}
+- GET  /api/projects/{projectId}/user-roles/{userId}/permissions
+- GET  /api/roles
+- GET  /api/roles/{id}
+- POST /api/roles
+- PUT  /api/roles/{id}
+- DELETE /api/roles/{id}
+- PUT  /api/roles/{id}/permissions
+- GET  /api/roles/permissions
+- GET  /api/projects/{projectId}/access-rules
+- POST /api/projects/{projectId}/access-rules
+- PUT  /api/projects/{projectId}/access-rules/{id}
+- DELETE /api/projects/{projectId}/access-rules/{id}
+- GET  /api/projects/{projectId}/escalation-rules
+- PUT  /api/projects/{projectId}/escalation-rules
+- PUT  /api/projects/{projectId}/wip-limits
+
+## Admin Business Rules
+- All 31 permissions defined in src/types/user.ts PermissionGroups
+- System roles (isSystem: true) cannot be deleted
+- Admin layout restricts access based on permissions
+- Accept invitation page added to middleware publicRoutes

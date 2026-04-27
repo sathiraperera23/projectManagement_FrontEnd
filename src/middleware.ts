@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const publicRoutes = ['/login'];
+const publicRoutes = ['/login', '/accept-invitation'];
 
 export function middleware(request: NextRequest) {
   const authData = request.cookies.get('auth-storage')?.value;
