@@ -19,6 +19,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     { name: 'Backlog', href: `/projects/${projectId}/backlog` },
     { name: 'Timeline', href: `/projects/${projectId}/timeline` },
     { name: 'Sprints', href: `/projects/${projectId}/sprints` },
+    { name: 'Bug Queue', href: `/projects/${projectId}/bug-queue` },
     { name: 'Settings', href: `/projects/${projectId}/settings` },
   ];
 

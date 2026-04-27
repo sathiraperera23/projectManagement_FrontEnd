@@ -42,6 +42,90 @@ export function useInviteUser() {
   });
 }
 
+// ── Bug Queue hooks ────────────────────────────────────
+export function useBugApprovalQueue(projectId: number) {
+  const { bugReportApi } = require('@/lib/api/bugReport');
+  return useQuery({
+    queryKey: ['bug-approval-queue', projectId],
+    queryFn: () => bugReportApi.getApprovalQueue(projectId),
+    enabled: !!projectId,
+    refetchInterval: 2 * 60 * 1000,
+  });
+}
+
+export function useBugSubmissions(projectId: number) {
+  const { bugReportApi } = require('@/lib/api/bugReport');
+  return useQuery({
+    queryKey: ['bug-submissions', projectId],
+    queryFn: () => bugReportApi.getSubmissions(projectId),
+    enabled: !!projectId,
+  });
+}
+
+export function useApproveBug(projectId: number) {
+  const queryClient = useQueryClient();
+  const { bugReportApi } = require('@/lib/api/bugReport');
+  return useMutation({
+    mutationFn: (ticketId: number) => bugReportApi.approve(ticketId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['bug-approval-queue', projectId]
+      });
+      queryClient.invalidateQueries({ queryKey: ['my-tickets'] });
+    },
+  });
+}
+
+export function useRejectBug(projectId: number) {
+  const queryClient = useQueryClient();
+  const { bugReportApi } = require('@/lib/api/bugReport');
+  return useMutation({
+    mutationFn: ({ ticketId, reason }: { ticketId: number; reason: string }) =>
+      bugReportApi.reject(ticketId, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['bug-approval-queue', projectId]
+      });
+    },
+  });
+}
+
+export function useRequestMoreInfo(projectId: number) {
+  const queryClient = useQueryClient();
+  const { bugReportApi } = require('@/lib/api/bugReport');
+  return useMutation({
+    mutationFn: ({ ticketId, message }: {
+      ticketId: number; message: string
+    }) => bugReportApi.requestMoreInfo(ticketId, message),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['bug-approval-queue', projectId]
+      });
+    },
+  });
+}
+
+export function useBugSla(projectId: number) {
+  const { bugReportApi } = require('@/lib/api/bugReport');
+  return useQuery({
+    queryKey: ['bug-sla', projectId],
+    queryFn: () => bugReportApi.getSla(projectId),
+    enabled: !!projectId,
+  });
+}
+
+export function useUpdateBugSla(projectId: number) {
+  const queryClient = useQueryClient();
+  const { bugReportApi } = require('@/lib/api/bugReport');
+  return useMutation({
+    mutationFn: (request: any) =>
+      bugReportApi.updateSla(projectId, request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bug-sla', projectId] });
+    },
+  });
+}
+
 export function useDeactivateUser() {
   const queryClient = useQueryClient();
   return useMutation({

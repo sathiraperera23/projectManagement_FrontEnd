@@ -232,3 +232,42 @@
 - System roles (isSystem: true) cannot be deleted
 - Admin layout restricts access based on permissions
 - Accept invitation page added to middleware publicRoutes
+
+## Customer Bug Portal
+- Public submission form: src/app/(portal)/bug-report/page.tsx
+- Confirmation page: src/app/(portal)/bug-report/submitted/page.tsx
+- Ticket tracker: src/app/(portal)/bug-report/track/page.tsx
+- Portal layout: src/app/(portal)/layout.tsx
+- PM approval queue: src/app/(dashboard)/projects/[projectId]/bug-queue/page.tsx
+- API: src/lib/api/bugReport.ts
+- Types: src/types/bugReport.ts
+
+## Portal routes — all public, no auth required
+- /bug-report
+- /bug-report/submitted
+- /bug-report/track
+All added to publicRoutes in middleware.ts
+
+## Bug Report API Routes
+Public (no JWT):
+- POST /api/bug-report/submit
+- GET  /api/bug-report/track
+- GET  /api/bug-report/template
+
+Authenticated (JWT required):
+- GET  /api/projects/{projectId}/bug-approval-queue
+- GET  /api/projects/{projectId}/bug-submissions
+- POST /api/tickets/{ticketId}/approve
+- POST /api/tickets/{ticketId}/reject
+- POST /api/tickets/{ticketId}/request-more-info
+- GET  /api/projects/{projectId}/bug-sla
+- PUT  /api/projects/{projectId}/bug-sla
+- GET  /api/projects/{projectId}/bug-report-template
+
+## Bug Portal Business Rules
+- Customer never needs to log in — portal is fully public.
+- Project identified by project code (e.g. UMS).
+- File attachments max 5 files, 10MB each.
+- PM rejection requires a mandatory reason.
+- SLA breach shown in red in the approval queue.
+- Bug Queue tab only visible to users with APPROVE_TICKETS permission.
