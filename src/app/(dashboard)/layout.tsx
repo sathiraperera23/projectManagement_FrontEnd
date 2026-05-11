@@ -47,7 +47,7 @@ export default function DashboardLayout({
   const handleLogout = async () => {
     try {
       if (refreshToken) {
-        await authApi.logout({ refreshToken });
+        await authApi.logout(refreshToken);
       }
     } catch (error) {
       console.error('Logout failed', error);

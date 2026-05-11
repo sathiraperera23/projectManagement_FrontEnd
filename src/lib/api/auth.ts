@@ -1,27 +1,34 @@
 import api from '@/lib/axios';
-import {
-  AuthResponse,
-  LoginRequest,
-  RegisterRequest,
-  RegisterResponse,
-  RefreshRequest,
-  LogoutRequest
-} from '@/types/auth';
 
 export const authApi = {
-  login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-    const { data } = await api.post<AuthResponse>('/api/auth/login', credentials);
+  register: async (email: string, password: string, displayName: string) => {
+    const { data } = await api.post('/api/auth/register', {
+      email,
+      password,
+      displayName
+    });
     return data;
   },
-  register: async (userData: RegisterRequest): Promise<RegisterResponse> => {
-    const { data } = await api.post<RegisterResponse>('/api/auth/register', userData);
+
+  login: async (email: string, password: string) => {
+    const { data } = await api.post('/api/auth/login', {
+      email,
+      password
+    });
     return data;
   },
-  refresh: async (request: RefreshRequest): Promise<AuthResponse> => {
-    const { data } = await api.post<AuthResponse>('/api/auth/refresh', request);
+
+  refresh: async (refreshToken: string) => {
+    const { data } = await api.post('/api/auth/refresh', { refreshToken });
     return data;
   },
-  logout: async (request: LogoutRequest): Promise<void> => {
-    await api.post('/api/auth/logout', request);
+
+  logout: async (refreshToken: string) => {
+    await api.post('/api/auth/logout', { refreshToken });
+  },
+
+  getCurrentUser: async () => {
+    const { data } = await api.get('/api/auth/me');
+    return data;
   },
 };

@@ -24,7 +24,8 @@ api.interceptors.response.use(
 
         const { data } = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/refresh`,
-          { refreshToken }
+          { refreshToken },
+          { headers: { 'Content-Type': 'application/json' } }
         );
         useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
         original.headers.Authorization = `Bearer ${data.accessToken}`;
