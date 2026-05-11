@@ -20,6 +20,8 @@ api.interceptors.response.use(
       original._retry = true;
       try {
         const refreshToken = useAuthStore.getState().refreshToken;
+        if (!refreshToken) throw new Error('No refresh token');
+
         const { data } = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/refresh`,
           { refreshToken }

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
@@ -35,7 +36,10 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await authApi.login(values.username, values.password);
+      const data = await authApi.login({
+        username: values.username,
+        password: values.password,
+      });
       setTokens(data.accessToken, data.refreshToken);
       setUser(data.user);
       router.push('/my-tickets');
@@ -114,6 +118,12 @@ export default function LoginPage() {
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
+          </div>
+
+          <div className="text-center">
+            <Link href="/register" className="text-sm text-indigo-600 hover:text-indigo-500">
+              Don&apos;t have an account? Sign up
+            </Link>
           </div>
         </form>
       </div>

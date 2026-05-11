@@ -1,20 +1,27 @@
 import api from '@/lib/axios';
+import {
+  AuthResponse,
+  LoginRequest,
+  RegisterRequest,
+  RegisterResponse,
+  RefreshRequest,
+  LogoutRequest
+} from '@/types/auth';
 
 export const authApi = {
-  login: async (username: string, password: string) => {
-    const form = new URLSearchParams();
-    form.append('username', username);
-    form.append('password', password);
-    const { data } = await api.post('/api/auth/login', form, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
+  login: async (credentials: LoginRequest): Promise<AuthResponse> => {
+    const { data } = await api.post<AuthResponse>('/api/auth/login', credentials);
     return data;
   },
-  refresh: async (refreshToken: string) => {
-    const { data } = await api.post('/api/auth/refresh', { refreshToken });
+  register: async (userData: RegisterRequest): Promise<RegisterResponse> => {
+    const { data } = await api.post<RegisterResponse>('/api/auth/register', userData);
     return data;
   },
-  logout: async (refreshToken: string) => {
-    await api.post('/api/auth/logout', { refreshToken });
+  refresh: async (request: RefreshRequest): Promise<AuthResponse> => {
+    const { data } = await api.post<AuthResponse>('/api/auth/refresh', request);
+    return data;
+  },
+  logout: async (request: LogoutRequest): Promise<void> => {
+    await api.post('/api/auth/logout', request);
   },
 };
