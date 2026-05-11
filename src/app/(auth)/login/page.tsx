@@ -37,6 +37,7 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
+      // Using email as username for the backend
       const data = await authApi.login(values.email, values.password);
       setTokens(data.accessToken, data.refreshToken);
       router.push('/my-tickets');
