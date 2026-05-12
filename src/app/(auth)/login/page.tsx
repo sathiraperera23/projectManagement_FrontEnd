@@ -37,7 +37,6 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      // Using email as username for the backend
       const data = await authApi.login(values.email, values.password);
       setTokens(data.accessToken, data.refreshToken);
       router.push('/my-tickets');
@@ -67,38 +66,48 @@ export default function LoginPage() {
           )}
           <div className="space-y-4 rounded-md shadow-sm">
             <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <input
                 {...register('email')}
+                id="email"
                 type="email"
                 autoComplete="email"
                 className={cn(
                   'relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
                   errors.email && 'ring-red-500'
                 )}
-                placeholder="Email address"
+                placeholder="your@email.com"
               />
               {errors.email && (
                 <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
               )}
             </div>
             <div className="relative">
-              <input
-                {...register('password')}
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                className={cn(
-                  'relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
-                  errors.password && 'ring-red-500'
-                )}
-                placeholder="Password"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-2 text-gray-400 hover:text-gray-600"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  {...register('password')}
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  className={cn(
+                    'relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                    errors.password && 'ring-red-500'
+                  )}
+                  placeholder="Password"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
               )}

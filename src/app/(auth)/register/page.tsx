@@ -52,8 +52,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError(null);
     try {
-      // Using email as username for the backend
-      await authApi.register(values.email, values.email, values.password, values.displayName);
+      await authApi.register(values.email, values.password, values.displayName);
       // Automatically log in
       const data = await authApi.login(values.email, values.password);
       setTokens(data.accessToken, data.refreshToken);
