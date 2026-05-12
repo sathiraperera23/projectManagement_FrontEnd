@@ -12,7 +12,8 @@ import {
   Package,
   Layers,
   Flag,
-  Ticket as TicketIcon
+  Ticket as TicketIcon,
+  Activity
 } from 'lucide-react';
 import type { GanttBar } from '@/types/gantt';
 import { cn, formatDate } from '@/lib/utils';

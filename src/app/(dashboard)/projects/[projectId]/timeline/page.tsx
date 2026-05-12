@@ -84,11 +84,17 @@ export default function TimelinePage() {
         const productId = selectedProductId || 1; // Fallback if unknown
         return projectsApi.updateSubProject(pid, productId, bar.id, {
           name: bar.name,
-          startDate: startStr,
-          expectedEndDate: endStr
-        });
+          description: '', // Required by UpdateSubProjectRequest
+          status: 'InProgress', // Required by UpdateSubProjectRequest
+          moduleOwnerUserId: 1, // Required by UpdateSubProjectRequest
+        } as any);
       } else if (bar.type === 'Sprint') {
-        return sprintsApi.updateSprint(pid, bar.id, { startDate: startStr, endDate: endStr });
+        return sprintsApi.update(pid, bar.id, {
+          name: bar.name,
+          startDate: startStr,
+          endDate: endStr,
+          storyPointCapacity: 0
+        } as any);
       } else if (bar.type === 'Ticket') {
         return ticketsApi.update(bar.id, { startDate: startStr, expectedDueDate: endStr });
       }

@@ -49,6 +49,14 @@ type ReportTab =
   | 'changes';
 
 export default function ReportsPage() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <ReportsContent />
+    </React.Suspense>
+  );
+}
+
+function ReportsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<ReportTab>((searchParams.get('tab') as ReportTab) || 'charts');

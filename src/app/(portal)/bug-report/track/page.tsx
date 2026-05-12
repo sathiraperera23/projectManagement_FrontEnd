@@ -20,6 +20,14 @@ import { cn, formatDateTime } from '@/lib/utils';
 import type { TicketTrackingResult, TicketTrackingStatusEntry } from '@/types/bugReport';
 
 export default function BugTrackerPage() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <BugTrackerContent />
+    </React.Suspense>
+  );
+}
+
+function BugTrackerContent() {
   const searchParams = useSearchParams();
   const [ticketNumber, setTicketNumber] = useState(searchParams.get('ticketNumber') || '');
   const [email, setEmail] = useState('');

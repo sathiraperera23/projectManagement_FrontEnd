@@ -248,6 +248,24 @@
 - /bug-report/track
 All added to publicRoutes in middleware.ts
 
+## Authentication — IMPORTANT
+- Auth is simple email and password JWT — NOT Keycloak SSO
+- Backend runs on http://localhost:5290
+- NEXT_PUBLIC_API_URL=http://localhost:5290 in .env.local
+- Axios baseURL uses NEXT_PUBLIC_API_URL — NEVER change this
+- NEVER use /api as baseURL — Next.js intercepts /api routes
+- Login sends JSON: { email, password } to POST /api/auth/login
+- Register sends JSON: { email, password, displayName } to POST /api/auth/register
+- JWT decoded using jwt-decode to extract user info into authStore
+- .env.local is gitignored — must be created manually after cloning
+
+## Auth API endpoints
+- POST /api/auth/register — { email, password, displayName }
+- POST /api/auth/login    — { email, password }
+- POST /api/auth/refresh  — { refreshToken }
+- POST /api/auth/logout   — { refreshToken }
+- GET  /api/auth/me       — returns current user (JWT required)
+
 ## Bug Report API Routes
 Public (no JWT):
 - POST /api/bug-report/submit

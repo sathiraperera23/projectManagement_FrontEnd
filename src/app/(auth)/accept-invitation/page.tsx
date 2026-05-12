@@ -7,6 +7,14 @@ import { ShieldCheck, User, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AcceptInvitationPage() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <AcceptInvitationContent />
+    </React.Suspense>
+  );
+}
+
+function AcceptInvitationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');

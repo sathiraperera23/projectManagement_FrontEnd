@@ -6,6 +6,14 @@ import { CheckCircle2, ArrowRight, RefreshCw, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 export default function BugSubmittedPage() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <BugSubmittedContent />
+    </React.Suspense>
+  );
+}
+
+function BugSubmittedContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const ticketNumber = searchParams.get('ticketNumber');

@@ -101,9 +101,9 @@ export function CostingReport({ projectId }: Props) {
          </div>
 
          <div className="p-0">
-            {activeTab === 'subproject' && <BreakdownTable headers={['Sub-Project', 'Hours', 'Cost']} rows={report.subProjectBreakdown.map(s => [s.subProjectName, s.hoursLogged, `$${s.totalCost.toLocaleString()}`])} />}
-            {activeTab === 'team' && <BreakdownTable headers={['Team Name', 'Hours', 'Cost']} rows={report.teamBreakdown.map(t => [t.teamName, t.hoursLogged, `$${t.totalCost.toLocaleString()}`])} />}
-            {activeTab === 'ticket' && <BreakdownTable headers={['Ticket', 'Assignee', 'Hours', 'Cost']} rows={report.ticketBreakdown.map(t => [t.ticketNumber, t.assigneeName, t.hoursLogged, `$${t.cost.toLocaleString()}`])} />}
+            {activeTab === 'subproject' && <BreakdownTable headers={['Sub-Project', 'Hours', 'Cost']} rows={report.subProjectBreakdown.map((s: SubProjectCost) => [s.subProjectName, s.hoursLogged, `$${s.totalCost.toLocaleString()}`])} />}
+            {activeTab === 'team' && <BreakdownTable headers={['Team Name', 'Hours', 'Cost']} rows={report.teamBreakdown.map((t: TeamCost) => [t.teamName, t.hoursLogged, `$${t.totalCost.toLocaleString()}`])} />}
+            {activeTab === 'ticket' && <BreakdownTable headers={['Ticket', 'Assignee', 'Hours', 'Cost']} rows={report.ticketBreakdown.map((t: TicketCost) => [t.ticketNumber, t.assigneeName, t.hoursLogged, `$${t.cost.toLocaleString()}`])} />}
          </div>
       </div>
 
