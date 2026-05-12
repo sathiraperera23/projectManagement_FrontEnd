@@ -289,3 +289,15 @@ Authenticated (JWT required):
 - PM rejection requires a mandatory reason.
 - SLA breach shown in red in the approval queue.
 - Bug Queue tab only visible to users with APPROVE_TICKETS permission.
+
+## CRITICAL — Auth Storage
+- Zustand authStore uses COOKIE storage not localStorage
+- This is required because Next.js middleware runs on the server
+  and can only read cookies — not localStorage
+- The cookie name is auth-storage
+- Cookie expires in 7 days
+- Cookie path is / so middleware can read it on all routes
+- NEVER change the storage from cookie back to localStorage
+- NEVER change the cookie name from auth-storage
+- The middleware reads auth-storage cookie and checks
+  parsed.state.accessToken to determine if user is authenticated
