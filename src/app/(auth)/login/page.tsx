@@ -73,14 +73,16 @@ export default function LoginPage() {
               {error}
             </div>
           )}
-          <div className="-space-y-px rounded-md shadow-sm">
+          <div className="space-y-4 rounded-md shadow-sm">
             <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
               <input
                 {...register('username')}
+                id="username"
                 type="text"
                 autoComplete="username"
                 className={cn(
-                  'relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                  'mt-1 relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
                   errors.username && 'ring-red-500'
                 )}
                 placeholder="Username"
@@ -90,12 +92,14 @@ export default function LoginPage() {
               )}
             </div>
             <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
               <input
                 {...register('password')}
+                id="password"
                 type="password"
                 autoComplete="current-password"
                 className={cn(
-                  'relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                  'mt-1 relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
                   errors.password && 'ring-red-500'
                 )}
                 placeholder="Password"

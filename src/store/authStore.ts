@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import Cookies from 'js-cookie';
 
 interface User {
   id: string;
@@ -20,6 +21,12 @@ interface AuthState {
   hasRole: (role: string) => boolean;
 }
 
+const cookieStorage = {
+  getItem: (name: string) => Cookies.get(name) ?? null,
+  setItem: (name: string, value: string) => Cookies.set(name, value, { expires: 7 }),
+  removeItem: (name: string) => Cookies.remove(name),
+};
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -34,6 +41,9 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: () => !!get().accessToken,
       hasRole: (role) => get().user?.roles.includes(role) ?? false,
     }),
-    { name: 'auth-storage' }
+    {
+      name: 'auth-storage',
+      storage: createJSONStorage(() => cookieStorage)
+    }
   )
 );

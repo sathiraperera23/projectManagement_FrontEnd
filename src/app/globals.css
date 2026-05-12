@@ -2,6 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'frappe-gantt/dist/frappe-gantt.css';
+
+/* Critical path bar styling */
+.gantt .bar-wrapper.critical-path .bar {
+  fill: #ef4444;
+}
+
+/* Overdue bar styling */
+.gantt .bar-wrapper.overdue-bar .bar {
+  fill: #f97316;
+}
+
+/* Product bar styling */
+.gantt .bar-wrapper.product .bar {
+  fill: #6366f1;
+}
+
+/* SubProject bar styling */
+.gantt .bar-wrapper.subproject .bar {
+  fill: #0ea5e9;
+}
+
+/* Sprint bar styling */
+.gantt .bar-wrapper.sprint .bar {
+  fill: #10b981;
+}
+
+/* Milestone bar styling */
+.gantt .bar-wrapper.milestone .bar {
+  fill: #f59e0b;
+}
+
+/* Baseline bar overlay */
+.gantt .bar-wrapper .baseline-bar {
+  fill: #d1d5db;
+  opacity: 0.5;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
