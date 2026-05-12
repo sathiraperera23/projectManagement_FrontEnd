@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { jwtDecode } from 'jwt-decode';
 
 interface User {
@@ -52,6 +52,27 @@ export const useAuthStore = create<AuthState>()(
       hasRole: (role: string) =>
         get().user?.roles?.includes(role) ?? false,
     }),
-    { name: 'auth-storage' }
+    {
+      name: 'auth-storage',
+      storage: createJSONStorage(() => ({
+        getItem: (name) => {
+          if (typeof document === 'undefined') return null;
+          const match = document.cookie.match(
+            new RegExp('(^| )' + name + '=([^;]+)')
+          );
+          return match ? decodeURIComponent(match[2]) : null;
+        },
+        setItem: (name, value) => {
+          if (typeof document === 'undefined') return;
+          document.cookie = `${name}=${encodeURIComponent(
+            value
+          )};path=/;max-age=${60 * 60 * 24 * 7};SameSite=Lax`;
+        },
+        removeItem: (name) => {
+          if (typeof document === 'undefined') return;
+          document.cookie = `${name}=;path=/;max-age=0`;
+        },
+      })),
+    }
   )
 );

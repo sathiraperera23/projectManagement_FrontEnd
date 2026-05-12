@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -31,6 +31,13 @@ export default function LoginPage() {
   } = useForm<LoginForm>({
     resolver: zodResolver(schema),
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth-storage');
+      sessionStorage.clear();
+    }
+  }, []);
 
   const onSubmit = async (data: LoginForm) => {
     setLoading(true);
