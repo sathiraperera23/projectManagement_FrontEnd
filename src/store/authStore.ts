@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { jwtDecode } from 'jwt-decode';
 
 interface User {
   id: string;
@@ -7,6 +8,13 @@ interface User {
   displayName: string;
   avatarUrl?: string;
   roles: string[];
+}
+
+interface JWTPayload {
+  sub: string;
+  email: string;
+  name: string;
+  roles?: string[];
 }
 
 interface AuthState {
@@ -26,8 +34,23 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       user: null,
-      setTokens: (accessToken, refreshToken) =>
-        set({ accessToken, refreshToken }),
+      setTokens: (accessToken, refreshToken) => {
+        try {
+          const decoded = jwtDecode<JWTPayload>(accessToken);
+          set({
+            accessToken,
+            refreshToken,
+            user: {
+              id: decoded.sub,
+              email: decoded.email,
+              displayName: decoded.name,
+              roles: decoded.roles ?? []
+            }
+          });
+        } catch {
+          set({ accessToken, refreshToken });
+        }
+      },
       setUser: (user) => set({ user }),
       logout: () =>
         set({ accessToken: null, refreshToken: null, user: null }),

@@ -5,12 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
 import { cn } from '@/lib/utils';
 
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  email: z.string().min(1, 'Email is required').email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -19,9 +21,9 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const setTokens = useAuthStore((state) => state.setTokens);
-  const setUser = useAuthStore((state) => state.setUser);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -35,22 +37,11 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await authApi.login(values.username, values.password);
+      const data = await authApi.login(values.email, values.password);
       setTokens(data.accessToken, data.refreshToken);
-      setUser(data.user);
       router.push('/my-tickets');
-    } catch (err: unknown) {
-      let message = 'Failed to login. Please check your credentials.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const response = (err as Record<string, unknown>).response as Record<string, unknown> | undefined;
-        if (response && response.data && typeof response.data === 'object') {
-          const data = response.data as Record<string, unknown>;
-          if (typeof data.message === 'string') {
-            message = data.message;
-          }
-        }
-      }
-      setError(message);
+    } catch {
+      setError('Invalid email or password');
     } finally {
       setIsLoading(false);
     }
@@ -73,33 +64,50 @@ export default function LoginPage() {
               {error}
             </div>
           )}
-          <div className="-space-y-px rounded-md shadow-sm">
+          <div className="space-y-4 rounded-md shadow-sm">
             <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <input
-                {...register('username')}
-                type="text"
-                autoComplete="username"
+                {...register('email')}
+                id="email"
+                type="email"
+                autoComplete="email"
                 className={cn(
-                  'relative block w-full rounded-t-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
-                  errors.username && 'ring-red-500'
+                  'relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                  errors.email && 'ring-red-500'
                 )}
-                placeholder="Username"
+                placeholder="your@email.com"
               />
-              {errors.username && (
-                <p className="mt-1 text-xs text-red-500">{errors.username.message}</p>
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
               )}
             </div>
-            <div>
-              <input
-                {...register('password')}
-                type="password"
-                autoComplete="current-password"
-                className={cn(
-                  'relative block w-full rounded-b-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
-                  errors.password && 'ring-red-500'
-                )}
-                placeholder="Password"
-              />
+            <div className="relative">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  {...register('password')}
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  className={cn(
+                    'relative block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
+                    errors.password && 'ring-red-500'
+                  )}
+                  placeholder="Password"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-2 text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {errors.password && (
                 <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
               )}
@@ -114,6 +122,12 @@ export default function LoginPage() {
             >
               {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
+          </div>
+
+          <div className="text-center">
+            <Link href="/register" className="text-sm text-indigo-600 hover:text-indigo-500">
+              Don&apos;t have an account? Register
+            </Link>
           </div>
         </form>
       </div>
