@@ -183,6 +183,9 @@ export const reportsApi = {
   setDelayReason: async (ticketId: number, reason: string) => {
     await api.put(`/api/tickets/${ticketId}/delay-reason`, { reason });
   },
+  setRevisedDueDate: async (ticketId: number, revisedDueDate: string) => {
+    await api.put(`/api/tickets/${ticketId}/revised-due-date`, { revisedDueDate });
+  },
   getEscalationRules: async (projectId: number) => {
     const { data } = await api.get(
       `/api/projects/${projectId}/escalation-rules`

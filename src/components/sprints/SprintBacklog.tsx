@@ -14,7 +14,7 @@ import {
 } from '@dnd-kit/core';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { useSprintTickets, useAddTicketToSprint, useRemoveTicketFromSprint } from '@/hooks/useSprints';
-import { useTickets } from '@/hooks/useTickets';
+import { useProjectBacklog } from '@/hooks/useBacklog';
 import { cn } from '@/lib/utils';
 import {
   GripVertical,
@@ -39,10 +39,7 @@ export function SprintBacklog({ projectId, sprintId, isActive = false }: Props) 
   const [filter, setFilter] = useState('');
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
 
-  const { data: backlogTickets, isLoading: loadingBacklog } = useTickets({
-    projectId,
-    sprintId: 'null' as any
-  });
+  const { data: backlogTickets, isLoading: loadingBacklog } = useProjectBacklog(projectId);
   const { data: sprintTickets, isLoading: loadingSprint } = useSprintTickets(projectId, sprintId);
 
   const addMutation = useAddTicketToSprint(projectId, sprintId);

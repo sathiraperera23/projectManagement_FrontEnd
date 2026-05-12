@@ -7,17 +7,31 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
 
-const schema = z.object({
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Invalid email format'),
-  password: z.string().min(1, 'Password is required'),
-});
+const schema = z
+  .object({
+    displayName: z
+      .string()
+      .min(1, 'Display name is required')
+      .max(100, 'Display name cannot exceed 100 characters'),
+    email: z
+      .string()
+      .min(1, 'Email is required')
+      .email('Invalid email format'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
-type LoginForm = z.infer<typeof schema>;
+type RegisterForm = z.infer<typeof schema>;
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const { setTokens } = useAuthStore();
   const [error, setError] = useState('');
@@ -28,23 +42,32 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({
+  } = useForm<RegisterForm>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (data: RegisterForm) => {
     setLoading(true);
     setError('');
     try {
-      const response = await authApi.login(data.email, data.password);
+      const response = await authApi.register(
+        data.email,
+        data.password,
+        data.displayName
+      );
       setTokens(response.accessToken, response.refreshToken);
       router.push('/my-tickets');
     } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-        err?.response?.data ||
-        'Invalid email or password'
-      );
+      const responseData = err?.response?.data;
+      if (Array.isArray(responseData)) {
+        setError(responseData.join(', '));
+      } else if (typeof responseData === 'string') {
+        setError(responseData);
+      } else if (responseData?.message) {
+        setError(responseData.message);
+      } else {
+        setError('Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -54,12 +77,29 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-md bg-white rounded-xl shadow-sm p-8">
         <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-          Sign in
+          Create an account
         </h1>
         <p className="text-sm text-gray-500 mb-6">
           {process.env.NEXT_PUBLIC_APP_NAME || 'Task Management System'}
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Display Name
+            </label>
+            <input
+              {...register('displayName')}
+              type="text"
+              autoComplete="name"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="John Smith"
+            />
+            {errors.displayName && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.displayName.message}
+              </p>
+            )}
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -85,9 +125,9 @@ export default function LoginPage() {
               <input
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
+                autoComplete="new-password"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-                placeholder="••••••••"
+                placeholder="Min 8 characters"
               />
               <button
                 type="button"
@@ -103,6 +143,23 @@ export default function LoginPage() {
               </p>
             )}
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              {...register('confirmPassword')}
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Re-enter your password"
+            />
+            {errors.confirmPassword && (
+              <p className="text-xs text-red-500 mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
           {error && (
             <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2">
               {error}
@@ -113,15 +170,15 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading ? 'Creating account...' : 'Create Account'}
           </button>
           <p className="text-center text-sm text-gray-500">
-            Don&apos;t have an account?{' '}
+            Already have an account?{' '}
             <a
-              href="/register"
+              href="/login"
               className="text-blue-600 hover:underline font-medium"
             >
-              Register
+              Sign in
             </a>
           </p>
         </form>

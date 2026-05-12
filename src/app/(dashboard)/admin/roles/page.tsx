@@ -41,7 +41,7 @@ export default function AdminRolesPage() {
 
   React.useEffect(() => {
     if (selectedRole) {
-      setCheckedPermissions(selectedRole.permissions.map(p => p.id));
+      setCheckedPermissions(selectedRole.permissions.map((p: Permission) => p.id));
     }
   }, [selectedRole]);
 

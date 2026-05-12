@@ -10,9 +10,11 @@ import {
   Layers,
   ChevronRight,
   ExternalLink,
-  Calendar
+  Calendar,
+  CheckCircle2
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
+import type { DelayReportRow } from '@/types/reports';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
@@ -48,7 +50,7 @@ export function DelaysDashboard({ projectId }: Props) {
         color="text-red-600"
       >
         <div className="divide-y divide-gray-50">
-           {dashboard.overdueTickets.map(t => (
+           {dashboard.overdueTickets.map((t: DelayReportRow) => (
              <div key={t.ticketId} className="py-4 flex items-center justify-between group">
                 <div className="min-w-0 pr-4">
                    <p className="text-xs font-black text-red-600 uppercase tracking-tighter">#{t.ticketNumber}</p>
@@ -71,7 +73,7 @@ export function DelaysDashboard({ projectId }: Props) {
         color="text-amber-600"
       >
         <div className="divide-y divide-gray-50">
-           {dashboard.blockedTickets.map(t => (
+           {dashboard.blockedTickets.map((t: DelayReportRow) => (
              <div key={t.ticketId} className="py-4 flex items-start justify-between">
                 <div className="min-w-0 pr-4">
                    <p className="text-xs font-black text-amber-600 uppercase tracking-tighter">#{t.ticketNumber}</p>
@@ -93,7 +95,7 @@ export function DelaysDashboard({ projectId }: Props) {
         color="text-red-500"
       >
         <div className="divide-y divide-gray-50">
-           {dashboard.milestoneAtRisk.map((m, i) => (
+           {dashboard.milestoneAtRisk.map((m: any, i: number) => (
              <div key={i} className="py-4 flex items-center justify-between">
                 <div>
                    <p className="text-sm font-bold text-gray-900">{m.name}</p>
@@ -115,7 +117,7 @@ export function DelaysDashboard({ projectId }: Props) {
         color="text-indigo-600"
       >
         <div className="divide-y divide-gray-50">
-           {dashboard.subProjectDelays.map((sp, i) => (
+           {dashboard.subProjectDelays.map((sp: any, i: number) => (
              <div key={i} className="py-4 flex items-center justify-between group cursor-pointer hover:bg-indigo-50/30 px-2 -mx-2 rounded-xl transition-colors">
                 <div>
                    <p className="text-sm font-bold text-gray-900">{sp.subProjectName}</p>

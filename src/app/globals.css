@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import 'frappe-gantt/dist/frappe-gantt.css';
+@import 'frappe-gantt';
 
 /* Critical path bar styling */
 .gantt .bar-wrapper.critical-path .bar {

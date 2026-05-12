@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import Cookies from 'js-cookie';
+import { persist } from 'zustand/middleware';
+import { jwtDecode } from 'jwt-decode';
 
 interface User {
   id: string;
@@ -21,29 +21,37 @@ interface AuthState {
   hasRole: (role: string) => boolean;
 }
 
-const cookieStorage = {
-  getItem: (name: string) => Cookies.get(name) ?? null,
-  setItem: (name: string, value: string) => Cookies.set(name, value, { expires: 7 }),
-  removeItem: (name: string) => Cookies.remove(name),
-};
-
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       accessToken: null,
       refreshToken: null,
       user: null,
-      setTokens: (accessToken, refreshToken) =>
-        set({ accessToken, refreshToken }),
-      setUser: (user) => set({ user }),
+      setTokens: (accessToken: string, refreshToken: string) => {
+        try {
+          const decoded: any = jwtDecode(accessToken);
+          set({
+            accessToken,
+            refreshToken,
+            user: {
+              id: decoded.sub ?? decoded.nameid ?? '',
+              email: decoded.email ?? '',
+              displayName: decoded.name ?? decoded.unique_name ?? '',
+              avatarUrl: decoded.avatarUrl,
+              roles: decoded.roles ?? decoded.role ?? [],
+            },
+          });
+        } catch {
+          set({ accessToken, refreshToken });
+        }
+      },
+      setUser: (user: User) => set({ user }),
       logout: () =>
         set({ accessToken: null, refreshToken: null, user: null }),
       isAuthenticated: () => !!get().accessToken,
-      hasRole: (role) => get().user?.roles.includes(role) ?? false,
+      hasRole: (role: string) =>
+        get().user?.roles?.includes(role) ?? false,
     }),
-    {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => cookieStorage)
-    }
+    { name: 'auth-storage' }
   )
 );

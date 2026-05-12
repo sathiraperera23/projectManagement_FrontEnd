@@ -82,7 +82,7 @@ export function SprintCapacityBar({ projectId, sprintId }: Props) {
 
         {isExpanded && (
           <div className="divide-y divide-gray-50">
-            {capacity.memberCapacities.map((member) => (
+            {capacity.memberCapacities.map((member: any) => (
               <div key={member.userId} className="px-4 py-3 flex items-center justify-between group">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500">
