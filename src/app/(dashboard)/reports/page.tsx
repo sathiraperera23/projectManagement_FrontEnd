@@ -92,17 +92,23 @@ function ReportsContent() {
 
         <div className="relative flex items-center gap-3">
           <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Select Project:</span>
-          <div className="relative group">
-            <select
-              className="appearance-none bg-white border border-gray-200 rounded-xl pl-4 pr-10 py-2.5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500 shadow-sm transition-all cursor-pointer min-w-[240px]"
-              value={projectId || ''}
-              onChange={(e) => setProjectId(Number(e.target.value))}
-            >
-              <option value="">Choose a project...</option>
-              {projects?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none group-focus-within:rotate-180 transition-transform" />
-          </div>
+          {projects && projects.length === 0 ? (
+            <p className="text-sm font-bold text-amber-600 bg-amber-50 px-4 py-2 rounded-xl border border-amber-100">
+              You have no assigned projects yet. Please contact your project manager.
+            </p>
+          ) : (
+            <div className="relative group">
+              <select
+                className="appearance-none bg-white border border-gray-200 rounded-xl pl-4 pr-10 py-2.5 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-indigo-500 shadow-sm transition-all cursor-pointer min-w-[240px]"
+                value={projectId || ''}
+                onChange={(e) => setProjectId(Number(e.target.value))}
+              >
+                <option value="">Choose a project...</option>
+                {projects?.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+              </select>
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none group-focus-within:rotate-180 transition-transform" />
+            </div>
+          )}
         </div>
       </div>
 
