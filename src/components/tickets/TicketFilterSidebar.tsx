@@ -63,16 +63,22 @@ export function TicketFilterSidebar() {
         {/* Project */}
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-gray-700 uppercase tracking-wider">Project</label>
-          <select
-            value={filters.projectId || ''}
-            onChange={(e) => setFilter('projectId', e.target.value ? Number(e.target.value) : undefined)}
-            className="block w-full rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
-          >
-            <option value="">All Projects</option>
-            {projects?.map((p: { id: number; name: string }) => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
+          {projects && projects.length === 0 ? (
+            <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded-md border border-amber-100">
+              You have no assigned projects yet. Please contact your project manager.
+            </p>
+          ) : (
+            <select
+              value={filters.projectId || ''}
+              onChange={(e) => setFilter('projectId', e.target.value ? Number(e.target.value) : undefined)}
+              className="block w-full rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+              <option value="">All Projects</option>
+              {projects?.map((p: { id: number; name: string }) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* Priority */}
