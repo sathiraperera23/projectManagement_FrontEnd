@@ -56,7 +56,7 @@ export default function RegisterPage() {
         data.displayName
       );
       setTokens(response.accessToken, response.refreshToken);
-      router.push('/my-tickets');
+      router.push('/dashboard');
     } catch (err: any) {
       const responseData = err?.response?.data;
       if (Array.isArray(responseData)) {

@@ -18,19 +18,7 @@ import {
   X,
   Ticket
 } from 'lucide-react';
-
-const navigation = [
-  { name: 'My Tickets', href: '/my-tickets', icon: Ticket },
-  { name: 'Projects', href: '/projects', icon: Briefcase },
-  { name: 'Reports', href: '/reports', icon: BarChart2 },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
-];
-
-const adminNavigation = [
-  { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Roles', href: '/admin/roles', icon: ShieldCheck },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
-];
+import { useAuth, usePermissions } from '@/hooks/useAuth';
 
 export default function DashboardLayout({
   children,
@@ -44,6 +32,22 @@ export default function DashboardLayout({
   const refreshToken = useAuthStore((state) => state.refreshToken);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const { isAdmin } = useAuth();
+  const { canViewReports, canManageUsers } = usePermissions();
+
+  const navigation = [
+    { name: 'My Tickets', href: '/my-tickets', icon: Ticket, show: true },
+    { name: 'Projects', href: '/projects', icon: Briefcase, show: true },
+    { name: 'Reports', href: '/reports', icon: BarChart2, show: canViewReports },
+    { name: 'Notifications', href: '/notifications', icon: Bell, show: true },
+  ];
+
+  const adminNavigation = [
+    { name: 'Users / Team Management', href: '/admin/users', icon: Users, show: canManageUsers },
+    { name: 'Roles', href: '/admin/roles', icon: ShieldCheck, show: isAdmin },
+    { name: 'Settings', href: '/admin/settings', icon: Settings, show: isAdmin },
+  ];
+
   const handleLogout = async () => {
     try {
       if (refreshToken) {
@@ -56,8 +60,6 @@ export default function DashboardLayout({
       router.push('/login');
     }
   };
-
-  const isAdmin = user?.roles.includes('Admin');
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -77,7 +79,7 @@ export default function DashboardLayout({
             </button>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
-            {navigation.map((item) => (
+            {navigation.filter(i => i.show).map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -92,12 +94,12 @@ export default function DashboardLayout({
                 {item.name}
               </Link>
             ))}
-            {isAdmin && (
+            {adminNavigation.some(i => i.show) && (
               <>
                 <div className="mt-8 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
                   Admin
                 </div>
-                {adminNavigation.map((item) => (
+                {adminNavigation.filter(i => i.show).map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
@@ -126,7 +128,7 @@ export default function DashboardLayout({
           </div>
           <div className="flex flex-1 flex-col overflow-y-auto">
             <nav className="flex-1 space-y-1 px-2 py-4">
-              {navigation.map((item) => (
+              {navigation.filter(i => i.show).map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -141,12 +143,12 @@ export default function DashboardLayout({
                   {item.name}
                 </Link>
               ))}
-              {isAdmin && (
+              {adminNavigation.some(i => i.show) && (
                 <>
                   <div className="mt-8 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
                     Admin
                   </div>
-                  {adminNavigation.map((item) => (
+                  {adminNavigation.filter(i => i.show).map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}

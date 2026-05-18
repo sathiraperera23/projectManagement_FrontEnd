@@ -40,7 +40,7 @@ export function middleware(request: NextRequest) {
     isAuthenticated &&
     (pathname === '/login' || pathname === '/register')
   ) {
-    return NextResponse.redirect(new URL('/my-tickets', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return NextResponse.next();

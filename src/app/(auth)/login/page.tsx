@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/store/authStore';
+import Cookies from 'js-cookie';
 
 const schema = z.object({
   email: z
@@ -44,8 +45,22 @@ export default function LoginPage() {
     setError('');
     try {
       const response = await authApi.login(data.email, data.password);
+
+      // Store JWT in a cookie named token
+      Cookies.set('token', response.accessToken, { expires: 7, path: '/' });
+
+      // Store user details in localStorage
+      const userData = {
+        userId: response.userId,
+        email: response.email,
+        displayName: response.displayName,
+        role: response.role,
+        permissions: response.permissions
+      };
+      localStorage.setItem('user', JSON.stringify(userData));
+
       setTokens(response.accessToken, response.refreshToken);
-      router.push('/my-tickets');
+      router.push('/dashboard');
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||

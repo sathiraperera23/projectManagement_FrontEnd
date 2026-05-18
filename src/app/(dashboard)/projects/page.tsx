@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useProjects, useCreateProject } from '@/hooks/useProjects';
 import { useAuthStore } from '@/store/authStore';
+import { useAuth, usePermissions } from '@/hooks/useAuth';
 import {
   Plus,
   Search,
@@ -37,8 +38,8 @@ export default function ProjectsPage() {
 
   const { data: projects, isLoading } = useProjects();
   const createMutation = useCreateProject();
-  const user = useAuthStore(state => state.user);
-  const canCreate = user?.roles.includes('Admin') || user?.roles.includes('ProjectManager');
+  const { user } = useAuth();
+  const { canCreateProject, canEditProject, canDeleteProject } = usePermissions();
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
@@ -69,7 +70,7 @@ export default function ProjectsPage() {
           <p className="text-sm text-gray-500">Manage and track your project portfolio</p>
         </div>
 
-        {canCreate && (
+        {canCreateProject && (
           <button
             onClick={() => setIsCreateOpen(true)}
             className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
@@ -121,7 +122,7 @@ export default function ProjectsPage() {
            <p className="mt-2 text-sm text-gray-500 max-w-sm">
              Try adjusting your search or filters, or create a new project to get started.
            </p>
-           {canCreate && (
+           {canCreateProject && (
              <button
                onClick={() => setIsCreateOpen(true)}
                className="mt-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
@@ -147,6 +148,25 @@ export default function ProjectsPage() {
                 />
 
                 <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-2 absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    {canEditProject && (
+                      <button
+                        onClick={(e) => { e.preventDefault(); /* edit logic */ }}
+                        className="p-1 bg-white rounded border border-gray-200 text-gray-400 hover:text-indigo-600 shadow-sm"
+                      >
+                        <Archive className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                    {canDeleteProject && (
+                      <button
+                        onClick={(e) => { e.preventDefault(); /* delete logic */ }}
+                        className="p-1 bg-white rounded border border-gray-200 text-gray-400 hover:text-red-600 shadow-sm"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50 text-gray-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
                      {project.avatarUrl ? (
                        <img src={project.avatarUrl} alt="" className="h-full w-full rounded-lg object-cover" />
@@ -189,6 +209,15 @@ export default function ProjectsPage() {
                    <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
                       <div className="h-full bg-indigo-500 rounded-full" style={{ width: '65%' }} />
                    </div>
+
+                   {canCreateProject && (
+                     <button
+                        onClick={(e) => { e.preventDefault(); /* assign team logic */ }}
+                        className="w-full mt-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+                     >
+                        Assign Team
+                     </button>
+                   )}
                 </div>
              </Link>
            ))}
