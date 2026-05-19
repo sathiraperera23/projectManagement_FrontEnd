@@ -14,16 +14,15 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isPublic = publicRoutes.some(
-    (route) =>
-      pathname === route || pathname.startsWith(route + '/')
+    (route) => pathname === route || pathname.startsWith(route + '/')
   );
 
-  const authCookie = request.cookies.get('auth-storage')?.value;
+  const authStorage = request.cookies.get('auth-storage')?.value;
   let isAuthenticated = false;
 
-  if (authCookie) {
+  if (authStorage) {
     try {
-      const parsed = JSON.parse(decodeURIComponent(authCookie));
+      const parsed = JSON.parse(decodeURIComponent(authStorage));
       isAuthenticated = !!parsed?.state?.accessToken;
     } catch {
       isAuthenticated = false;
@@ -31,15 +30,10 @@ export function middleware(request: NextRequest) {
   }
 
   if (!isAuthenticated && !isPublic) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('from', pathname);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (
-    isAuthenticated &&
-    (pathname === '/login' || pathname === '/register')
-  ) {
+  if (isAuthenticated && (pathname === '/login' || pathname === '/register')) {
     return NextResponse.redirect(new URL('/my-tickets', request.url));
   }
 
@@ -47,7 +41,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

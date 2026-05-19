@@ -55,6 +55,19 @@ export default function RegisterPage() {
         data.password,
         data.displayName
       );
+
+      // Store user details in localStorage for useAuth hook
+      if (typeof window !== 'undefined') {
+        const userData = {
+          userId: response.userId || response.id,
+          email: response.email,
+          displayName: response.displayName,
+          role: response.role || (response.roles && response.roles[0]),
+          permissions: response.permissions || {}
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+
       setTokens(response.accessToken, response.refreshToken);
       router.push('/my-tickets');
     } catch (err: any) {

@@ -7,6 +7,7 @@ import * as z from 'zod';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { projectsApi } from '@/lib/api/projects';
 import { ticketsApi } from '@/lib/api/tickets';
+import { useAuth, usePermissions } from '@/hooks/useAuth';
 import { X } from 'lucide-react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -43,6 +44,7 @@ interface Props {
 
 export function TicketForm({ isOpen, onClose }: Props) {
   const queryClient = useQueryClient();
+  const { canAssignTickets } = usePermissions();
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<TicketFormValues>({
     resolver: zodResolver(ticketSchema),
@@ -253,27 +255,29 @@ export function TicketForm({ isOpen, onClose }: Props) {
             )}
 
             {/* Assignees */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Assignees</label>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {teamMembers?.map((member: { id: number; displayName: string }) => (
-                  <label key={member.id} className="flex items-center gap-2 rounded-md border border-gray-200 p-2 text-sm hover:bg-gray-50">
-                    <input
-                      type="checkbox"
-                      value={member.id}
-                      checked={watch('assigneeIds').includes(member.id)}
-                      onChange={(e) => {
-                        const current = watch('assigneeIds');
-                        if (e.target.checked) setValue('assigneeIds', [...current, member.id]);
-                        else setValue('assigneeIds', current.filter(id => id !== member.id));
-                      }}
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    {member.displayName}
-                  </label>
-                ))}
+            {canAssignTickets && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Assignees</label>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {teamMembers?.map((member: { id: number; displayName: string }) => (
+                    <label key={member.id} className="flex items-center gap-2 rounded-md border border-gray-200 p-2 text-sm hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        value={member.id}
+                        checked={watch('assigneeIds').includes(member.id)}
+                        onChange={(e) => {
+                          const current = watch('assigneeIds');
+                          if (e.target.checked) setValue('assigneeIds', [...current, member.id]);
+                          else setValue('assigneeIds', current.filter(id => id !== member.id));
+                        }}
+                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      />
+                      {member.displayName}
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>

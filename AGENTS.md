@@ -248,6 +248,18 @@
 - /bug-report/track
 All added to publicRoutes in middleware.ts
 
+## CRITICAL — Auth Storage
+- Zustand authStore uses COOKIE storage not localStorage
+- This is required because Next.js middleware runs on the server
+  and can only read cookies — not localStorage
+- The cookie name is auth-storage
+- Cookie expires in 7 days
+- Cookie path is / so middleware can read it on all routes
+- NEVER change the storage from cookie back to localStorage
+- NEVER change the cookie name from auth-storage
+- The middleware reads auth-storage cookie and checks
+  parsed.state.accessToken to determine if user is authenticated
+
 ## Authentication — IMPORTANT
 - Auth is simple email and password JWT — NOT Keycloak SSO
 - Backend runs on http://localhost:5290
@@ -265,39 +277,3 @@ All added to publicRoutes in middleware.ts
 - POST /api/auth/refresh  — { refreshToken }
 - POST /api/auth/logout   — { refreshToken }
 - GET  /api/auth/me       — returns current user (JWT required)
-
-## Bug Report API Routes
-Public (no JWT):
-- POST /api/bug-report/submit
-- GET  /api/bug-report/track
-- GET  /api/bug-report/template
-
-Authenticated (JWT required):
-- GET  /api/projects/{projectId}/bug-approval-queue
-- GET  /api/projects/{projectId}/bug-submissions
-- POST /api/tickets/{ticketId}/approve
-- POST /api/tickets/{ticketId}/reject
-- POST /api/tickets/{ticketId}/request-more-info
-- GET  /api/projects/{projectId}/bug-sla
-- PUT  /api/projects/{projectId}/bug-sla
-- GET  /api/projects/{projectId}/bug-report-template
-
-## Bug Portal Business Rules
-- Customer never needs to log in — portal is fully public.
-- Project identified by project code (e.g. UMS).
-- File attachments max 5 files, 10MB each.
-- PM rejection requires a mandatory reason.
-- SLA breach shown in red in the approval queue.
-- Bug Queue tab only visible to users with APPROVE_TICKETS permission.
-
-## CRITICAL — Auth Storage
-- Zustand authStore uses COOKIE storage not localStorage
-- This is required because Next.js middleware runs on the server
-  and can only read cookies — not localStorage
-- The cookie name is auth-storage
-- Cookie expires in 7 days
-- Cookie path is / so middleware can read it on all routes
-- NEVER change the storage from cookie back to localStorage
-- NEVER change the cookie name from auth-storage
-- The middleware reads auth-storage cookie and checks
-  parsed.state.accessToken to determine if user is authenticated

@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth-storage');
+      localStorage.removeItem('user');
       sessionStorage.clear();
     }
   }, []);
@@ -44,6 +44,19 @@ export default function LoginPage() {
     setError('');
     try {
       const response = await authApi.login(data.email, data.password);
+
+      // Store user details in localStorage for useAuth hook
+      if (typeof window !== 'undefined') {
+        const userData = {
+          userId: response.userId || response.id,
+          email: response.email,
+          displayName: response.displayName,
+          role: response.role || (response.roles && response.roles[0]),
+          permissions: response.permissions || {}
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+
       setTokens(response.accessToken, response.refreshToken);
       router.push('/my-tickets');
     } catch (err: any) {

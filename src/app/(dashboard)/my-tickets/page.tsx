@@ -14,6 +14,7 @@ import {
   LayoutGrid,
   Activity,
   Plus,
+  X,
   Filter,
   ChevronLeft,
   ChevronRight,
@@ -23,6 +24,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
+import { useAuth, usePermissions } from '@/hooks/useAuth';
 
 type ViewMode = 'list' | 'board' | 'activity';
 
@@ -30,6 +32,8 @@ export default function MyTicketsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const { canDeleteProject } = usePermissions();
 
   const { filters, selectedTicketIds, clearSelection, selectAll, toggleTicketSelection } = useTicketStore();
   const { data, isLoading, isError, refetch } = useMyTickets(filters);
@@ -204,9 +208,19 @@ export default function MyTicketsPage() {
                             {ticket.expectedDueDate ? formatDate(ticket.expectedDueDate) : '-'}
                           </td>
                           <td className="px-4 py-4 text-right">
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <MoreVertical className="h-4 w-4" />
-                            </button>
+                            <div className="flex items-center justify-end gap-2">
+                               {canDeleteProject && (
+                                 <button
+                                   onClick={() => { /* delete logic */ }}
+                                   className="p-1 text-gray-400 hover:text-red-600"
+                                 >
+                                    <X className="h-4 w-4" />
+                                 </button>
+                               )}
+                               <button className="text-gray-400 hover:text-gray-600">
+                                 <MoreVertical className="h-4 w-4" />
+                               </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

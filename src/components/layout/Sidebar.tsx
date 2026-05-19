@@ -18,20 +18,22 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/authStore';
+import { useAuth, usePermissions } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
 
 export function Sidebar({ isCollapsed, onToggle }: { isCollapsed: boolean, onToggle: () => void }) {
   const pathname = usePathname();
   const user = useAuthStore(s => s.user);
+  const { isAdmin } = useAuth();
+  const { canViewReports, canManageUsers } = usePermissions();
 
   const navItems = [
-    { name: 'My Tickets', href: '/my-tickets', icon: LayoutDashboard },
-    { name: 'Projects', href: '/projects', icon: Briefcase },
-    { name: 'Reports', href: '/reports', icon: BarChart3 },
-    { name: 'Notifications', href: '/notifications', icon: Bell },
+    { name: 'My Tickets', href: '/my-tickets', icon: LayoutDashboard, show: true },
+    { name: 'Projects', href: '/projects', icon: Briefcase, show: true },
+    { name: 'Reports', href: '/reports', icon: BarChart3, show: canViewReports },
+    { name: 'Costing', href: '/reports?tab=costing', icon: BarChart3, show: canViewReports },
+    { name: 'Notifications', href: '/notifications', icon: Bell, show: true },
   ];
-
-  const isAdmin = user?.roles.some(r => ['Administrator', 'Project Manager'].includes(r));
 
   const copyPortalLink = () => {
     const url = `${window.location.origin}/bug-report`;
@@ -54,7 +56,7 @@ export function Sidebar({ isCollapsed, onToggle }: { isCollapsed: boolean, onTog
       </div>
 
       <nav className="flex-1 px-4 space-y-1 mt-4">
-        {navItems.map((item) => {
+        {navItems.filter(i => i.show).map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
             <Link
@@ -73,7 +75,7 @@ export function Sidebar({ isCollapsed, onToggle }: { isCollapsed: boolean, onTog
           );
         })}
 
-        {isAdmin && (
+        {(isAdmin || canManageUsers) && (
           <Link
             href="/admin/users"
             className={cn(

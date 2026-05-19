@@ -46,8 +46,12 @@ export const useAuthStore = create<AuthState>()(
         }
       },
       setUser: (user: User) => set({ user }),
-      logout: () =>
-        set({ accessToken: null, refreshToken: null, user: null }),
+      logout: () => {
+        set({ accessToken: null, refreshToken: null, user: null });
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user');
+        }
+      },
       isAuthenticated: () => !!get().accessToken,
       hasRole: (role: string) =>
         get().user?.roles?.includes(role) ?? false,

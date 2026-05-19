@@ -23,11 +23,25 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { cn, formatDateTime } from '@/lib/utils';
+import { usePermissions } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import type { User, UserInvitation } from '@/types/user';
 
 export default function AdminUsersPage() {
+  const { canManageUsers } = usePermissions();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (!canManageUsers) {
+      toast.error('Access Denied');
+      router.push('/dashboard');
+    }
+  }, [canManageUsers, router]);
+
   const [activeTab, setActiveTab] = useState<'all' | 'pending'>('all');
+
+  if (!canManageUsers) return null;
   const [search, setSearch] = useState('');
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
